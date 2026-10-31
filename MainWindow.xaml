@@ -1,0 +1,306 @@
+<ui:FluentWindow x:Class="RestaurantManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Restaurant Manager" Height="780" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        WindowBackdropType="Mica"
+        ExtendsContentIntoTitleBar="True"
+        Icon="/app.ico">
+
+    <ui:FluentWindow.Resources>
+        <!-- Navigation button style -->
+        <Style x:Key="NavBtn" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="NavBd" CornerRadius="10"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="NavBd" Property="Background" Value="#0a000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Bar -->
+        <ui:TitleBar x:Name="AppTitleBar" Grid.Row="0" Title="Restaurant Invoice System"/>
+
+        <!-- ═══════════ UPDATE BANNER ═══════════ -->
+        <Border x:Name="UpdateBanner" Grid.Row="1" Visibility="Collapsed" Padding="12,8" Cursor="Hand"
+                MouseLeftButtonUp="UpdateBanner_Click">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#667eea" Offset="0"/>
+                    <GradientStop Color="#764ba2" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="🚀" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock x:Name="UpdateMessage" Text="A new update is available!" 
+                               FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                    <TextBlock x:Name="UpdateNotes" Text="" FontSize="10" Foreground="#ffffffcc" 
+                               TextTrimming="CharacterEllipsis" MaxWidth="600" HorizontalAlignment="Left"/>
+                </StackPanel>
+                <Button x:Name="UpdateDownloadBtn" Grid.Column="2" Content="⬇ Download" 
+                        Click="UpdateDownload_Click" Cursor="Hand" Margin="8,0"
+                        FontSize="11" FontWeight="SemiBold" Foreground="White" Background="#ffffff30" 
+                        BorderThickness="1" Padding="12,4">
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="White" Opacity="0.3"/>
+                    </Button.BorderBrush>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="UpdBd" CornerRadius="6" Padding="{TemplateBinding Padding}" 
+                                    Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="UpdBd" Property="Background" Value="#ffffff50"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Grid.Column="3" Content="✕" Click="UpdateDismiss_Click" Cursor="Hand"
+                        FontSize="12" Foreground="#ffffffaa" Background="Transparent" BorderThickness="0"
+                        VerticalAlignment="Center" Padding="6,2" ToolTip="Dismiss">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="DisBd" CornerRadius="4" Padding="{TemplateBinding Padding}" Background="Transparent">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="DisBd" Property="Background" Value="#ffffff20"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Main Layout -->
+        <DockPanel Grid.Row="2">
+
+            <!-- ═══════════ SIDEBAR ═══════════ -->
+            <Border x:Name="SidebarPanel" DockPanel.Dock="Left" Width="240" ClipToBounds="True"
+                    BorderBrush="#e2e8f0" BorderThickness="0,0,1,0">
+                <Border.Background>
+                    <SolidColorBrush Color="#f8fafc" Opacity="0.7"/>
+                </Border.Background>
+
+                <DockPanel>
+                    <!-- ─── User Profile ─── -->
+                    <Border DockPanel.Dock="Top" Margin="16,16,16,0" CornerRadius="12" Padding="14,12"
+                            Background="#f1f5f9">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="40" Height="40" CornerRadius="20" Margin="0,0,12,0"
+                                    Background="#e2e8f0">
+                                <TextBlock x:Name="UserInitials" Text="U" FontSize="15" FontWeight="Bold"
+                                           Foreground="#475569" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock x:Name="UserLabel" Text="" FontSize="13" FontWeight="SemiBold" Foreground="#1e293b"/>
+                                <TextBlock x:Name="UserRoleLabel" Text="" FontSize="10" Foreground="#64748b" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ─── Section Label ─── -->
+                    <TextBlock DockPanel.Dock="Top" Text="NAVIGATION" FontSize="9" FontWeight="Bold" 
+                               Foreground="#94a3b8" Margin="20,24,0,10"/>
+
+                    <!-- ─── Bottom: Status + Logout ─── -->
+                    <StackPanel DockPanel.Dock="Bottom" Margin="16,0,16,16">
+                        <Border Height="1" Background="#e2e8f0" Margin="0,0,0,12"/>
+
+                        <!-- System Status -->
+                        <StackPanel Orientation="Horizontal" Margin="8,0,0,10">
+                            <Ellipse Width="6" Height="6" Fill="#22c55e" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Online" FontSize="10" Foreground="#64748b" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="SyncStatus" Text="" FontSize="10" Foreground="#94a3b8" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Help Button -->
+                        <Button Click="HelpBtn_Click" Height="36" Cursor="Hand"
+                                Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="0" Margin="0,0,0,4">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="HelpBd" CornerRadius="8" Padding="8,0" Background="Transparent">
+                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="HelpBd" Property="Background" Value="#f0f4ff"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⌨" FontSize="13" Foreground="#667eea" Width="28" TextAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="Shortcuts (F12)" FontSize="12" Foreground="#667eea" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Logout Button -->
+                        <Button x:Name="LogoutBtn" Click="LogoutBtn_Click" Height="36" Cursor="Hand"
+                                Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="LogoutBd" CornerRadius="8" Padding="8,0" Background="Transparent">
+                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="LogoutBd" Property="Background" Value="#fef2f2"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⏻" FontSize="13" Foreground="#ef4444" Width="28" TextAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="Sign Out" FontSize="12" Foreground="#ef4444" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock x:Name="SidebarTrademark" Text="Powered by Restaurant Manager"
+                                   FontSize="8" Foreground="#94a3b8" FontStyle="Italic" TextWrapping="Wrap"
+                                   HorizontalAlignment="Center" TextAlignment="Center" Margin="8,10,8,0"/>
+                    </StackPanel>
+
+                    <!-- ─── Navigation Items ─── -->
+                    <StackPanel Margin="12,0,12,0">
+                        <!-- Dashboard -->
+                        <Grid Margin="0,1">
+                            <Border x:Name="DashboardIndicator" Width="3" CornerRadius="2"
+                                    HorizontalAlignment="Left" Margin="0,8" Visibility="Collapsed"
+                                    Background="#667eea"/>
+                            <Button x:Name="DashboardBtn" Style="{StaticResource NavBtn}" Click="DashboardBtn_Click" 
+                                    Margin="6,0,0,0" Foreground="#64748b">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📊" FontSize="15" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Dashboard" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Orders -->
+                        <Grid Margin="0,1">
+                            <Border x:Name="OrdersIndicator" Width="3" CornerRadius="2"
+                                    HorizontalAlignment="Left" Margin="0,8" Visibility="Collapsed"
+                                    Background="#667eea"/>
+                            <Button x:Name="OrdersBtn" Style="{StaticResource NavBtn}" Click="OrdersBtn_Click" 
+                                    Margin="6,0,0,0" Foreground="#64748b">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🛒" FontSize="15" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Orders" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Sales History -->
+                        <Grid Margin="0,1">
+                            <Border x:Name="SalesHistoryIndicator" Width="3" CornerRadius="2"
+                                    HorizontalAlignment="Left" Margin="0,8" Visibility="Collapsed"
+                                    Background="#667eea"/>
+                            <Button x:Name="SalesHistoryBtn" Style="{StaticResource NavBtn}" Click="SalesHistoryBtn_Click" 
+                                    Margin="6,0,0,0" Foreground="#64748b">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📜" FontSize="15" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Sales History" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Inventory -->
+                        <Grid Margin="0,1">
+                            <Border x:Name="InventoryIndicator" Width="3" CornerRadius="2"
+                                    HorizontalAlignment="Left" Margin="0,8" Visibility="Collapsed"
+                                    Background="#667eea"/>
+                            <Button x:Name="InventoryBtn" Style="{StaticResource NavBtn}" Click="InventoryBtn_Click" 
+                                    Margin="6,0,0,0" Foreground="#64748b">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📦" FontSize="15" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Inventory" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Reports -->
+                        <Grid Margin="0,1">
+                            <Border x:Name="ReportsIndicator" Width="3" CornerRadius="2"
+                                    HorizontalAlignment="Left" Margin="0,8" Visibility="Collapsed"
+                                    Background="#667eea"/>
+                            <Button x:Name="ReportsBtn" Style="{StaticResource NavBtn}" Click="ReportsBtn_Click" 
+                                    Margin="6,0,0,0" Foreground="#64748b">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📈" FontSize="15" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Reports" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Settings (developer only) -->
+                        <Grid Margin="0,1">
+                            <Border x:Name="SettingsIndicator" Width="3" CornerRadius="2"
+                                    HorizontalAlignment="Left" Margin="0,8" Visibility="Collapsed"
+                                    Background="#667eea"/>
+                            <Button x:Name="SettingsBtn" Style="{StaticResource NavBtn}" Click="SettingsBtn_Click"
+                                    Margin="6,0,0,0" Visibility="Collapsed" Foreground="#64748b">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="⚙" FontSize="15" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Settings" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- ═══════════ CONTENT AREA ═══════════ -->
+            <DockPanel>
+                <TextBlock x:Name="TrademarkFooter" DockPanel.Dock="Bottom" Text="Powered by Restaurant Manager"
+                           FontSize="10" Foreground="#94a3b8" HorizontalAlignment="Center" Padding="0,6"
+                           FontStyle="Italic"/>
+                <ContentPresenter x:Name="ContentArea"/>
+            </DockPanel>
+        </DockPanel>
+    </Grid>
+</ui:FluentWindow>

@@ -1,0 +1,1071 @@
+Now I'll compile the comprehensive feature inventory based on my thorough exploration of the codebase.
+
+---
+
+## COMPREHENSIVE RESTAURANT MANAGER FEATURE INVENTORY
+
+### **1. AUTHENTICATION & USER MANAGEMENT**
+
+#### Login System
+- **Branding Customization:**
+  - Logo emoji (default: 🍽️) with visual preview
+  - Logo image upload with file storage in AppData
+  - Business name (2 lines): Line 1, Line 2
+  - Tagline text
+  - Description text
+  - Copyright text
+  - Window title customization
+  - Welcome screen title and subtitle
+  - Gradient background with decorative elements
+- **Demo Accounts:**
+  - Toggle show/hide demo login accounts
+  - Pre-populated accounts included:
+    - Developer (dev@restaurant.test)
+    - Admin (admin@restaurant.test)
+    - Chef/Kitchen (chef@restaurant.test)
+    - Waiter/Service (waiter@restaurant.test)
+    - Bartender (bar@restaurant.test)
+    - Cashier (cashier@restaurant.test)
+  - All demo accounts use password: "password"
+
+#### User Roles & Access Control
+- **Three Role Types:**
+  - **Developer**: Full access to all settings, customization, admin features
+  - **Admin**: Access to orders, inventory, reports, some settings
+  - **Staff**: Access to orders and dashboard
+- **Role-Based UI:**
+  - Settings tab only visible to developers/admins
+  - Inventory tab only visible to admins/developers
+  - Reports tab only visible to admins/developers
+- **Department Assignment:**
+  - Staff users can be assigned to departments (kitchen, service, bar, housekeeping, front-desk, custom)
+  - Many-to-many user-department relationship
+  - Multiple departments per user supported
+
+#### User Management (Admin Settings)
+- **Create Users:**
+  - Name, email, password fields
+  - Multi-select roles (staff, admin, developer)
+  - Department assignment from dropdown
+- **View Users:**
+  - Display user list with avatar, name, email, roles, department
+  - Shows all currently active users
+- **Delete Users:**
+  - Remove users with confirmation dialog
+  - Cannot delete current logged-in user
+- **User Validation:**
+  - Email and password required
+  - Email used for authentication
+
+---
+
+### **2. DASHBOARD**
+
+#### Main Dashboard View
+- **Header Section:**
+  - Time-based greeting (Good morning/afternoon/evening)
+  - Current user name and date display
+  - System online status indicator
+  - Sync status display
+
+#### Stat Cards (4 Main Metrics with Customizable Gradient Colors)
+- **Card 1 - Total Revenue:**
+  - Total revenue from all orders
+  - Percentage change vs yesterday
+  - Customizable gradient colors (default: #667eea → #764ba2)
+  - Emoji: 💰
+  
+- **Card 2 - Today's Orders:**
+  - Count of orders created today
+  - Revenue generated today
+  - Customizable gradient colors (default: #f97316 → #ef4444)
+  - Emoji: 🔥
+
+- **Card 3 - All Orders:**
+  - Total order count (all time)
+  - Average order value calculation
+  - Customizable gradient colors (default: #10b981 → #059669)
+  - Emoji: 📦
+
+- **Card 4 - Inventory:**
+  - Total inventory item count
+  - Low stock item count with warning badge
+  - Customizable gradient colors (default: #8b5cf6 → #6d28d9)
+  - Emoji: 📊
+
+#### Order Status Breakdown Section
+- **Status Badges with Icons:**
+  - ⏳ Pending (yellow background)
+  - 👨‍🍳 Preparing (blue background)
+  - ✅ Completed (green background)
+  - ❌ Cancelled (red background)
+- Real-time order count in each status
+
+#### Quick Actions Panel
+- ➕ New Order button
+- 📋 View All Orders button
+- 📦 Check Inventory button
+- 🔄 Refresh Dashboard button
+
+#### Recent Orders Grid
+- Shows last 8 orders in table format
+- Columns: Order #, Status, Items count, Total, Date/Time
+- Currency formatting applied
+- Hover effects and sorting support
+
+#### Low Stock Alerts
+- **Two States:**
+  - Low stock items list (if any): Shows name, quantity, and min level
+  - All stocked message: "✓ All stocked" (if no low stock items)
+- Scrollable list with max height
+- Items color-coded by status
+
+#### Performance Metrics
+- This week's order count
+- This month's order count
+- This month's total revenue
+- Today's completed orders count
+- Today's pending orders count
+- Today's average order value
+
+---
+
+### **3. ORDERS MANAGEMENT**
+
+#### Multi-Tab Order System
+- **Tab Features:**
+  - Multiple concurrent orders can be worked on
+  - Tab shows "Order #N (total items)" format
+  - Close button (✕) on each tab
+  - Unsaved data warning on back button
+  - Automatic tab numbering
+  - Active tab highlighted with gradient background
+  - New Tab button always available
+
+#### Menu Items Display
+- **Search Functionality:**
+  - Real-time search box with 🔍 icon
+  - Searches by item name and description
+- **Category Filtering:**
+  - Dynamic category tabs generated from inventory
+  - "All" category tab shows all items
+  - Active category tab highlighted
+  - Categories: Proteins, Produce, Dry Goods, Beverages, Dairy, Spices, Supplies, Custom
+- **Item Cards:**
+  - Item name (bold, truncated)
+  - Description (gray, truncated)
+  - Price in configured currency (green)
+  - Category badge (blue background)
+  - Click to add to order
+
+#### Order Summary Panel
+- **Header:**
+  - Gradient background (purple)
+  - Order title (New Order or Order #N)
+  - Subtitle (Add items vs Editing)
+  - Clear order button (✕)
+- **Table & Notes Section:**
+  - Table number input field
+  - Notes/comments text area
+- **Items List:**
+  - Item name and price per unit
+  - Quantity controls (-/quantity/+)
+  - Line total (right-aligned, green text)
+  - Remove capability via quantity control
+  - Empty state message with emoji
+- **Totals Section:**
+  - Subtotal
+  - Item count
+  - Total (large, green text)
+- **Action Buttons:**
+  - 📝 Save Draft button
+  - 🚀 Place Order button (green gradient)
+
+#### Order History Tab
+- **Filter & Search:**
+  - Search box (searches order number, table, notes)
+  - Status filter dropdown (All Orders, Pending, Preparing, Ready, Completed, Cancelled)
+  - Select All checkbox
+  - Order count display
+- **Order Cards (History):**
+  - Checkbox for multi-select
+  - Status icon with color-coded background
+  - Order number (#xxx)
+  - Status badge
+  - Table number
+  - Item count
+  - Date/time
+  - Total (green, bold)
+  - View/Edit button (✏ or 👁 depending on status)
+  - Delete button (🗑)
+- **Bulk Actions:**
+  - "Delete Selected (N)" button visible when items selected
+  - Select All/Deselect functionality
+  - Confirmation dialog for bulk delete
+
+#### Order Detail Modal
+- **Header (Gradient Purple):**
+  - Order # and creation date
+  - Close button
+- **Status Selector:**
+  - Dropdown with statuses: pending, preparing, ready, completed, cancelled
+  - Disabled for completed orders
+- **Table & Notes:**
+  - Editable text fields
+  - Read-only for completed orders (60% opacity)
+- **Items List:**
+  - Item name × quantity
+  - Line total
+  - Light gray background boxes
+- **Total Display:**
+  - Large green text
+- **Action Buttons:**
+  - For pending orders: "💳 Pay Now" visible
+  - For completed orders: "🖨 Print Receipt" visible
+  - "💾 Update Order" for non-completed
+  - "Cancel" button
+- **Status Messages:**
+  - Green/red feedback on operations
+
+#### Payment Processing
+- **Payment Overlay Modal:**
+  - Displays order total
+  - 4 payment methods with click to select:
+    - 💵 Cash (shows cash input)
+    - 💳 Card
+    - 🏦 Bank Transfer
+    - 📱 Mobile Money
+  - Selected method has green border and light background
+  
+- **Cash Payment Specific:**
+  - "Amount Received" input field
+  - Automatic change calculation
+  - Shows change amount when valid amount entered
+  - Only enables confirm when sufficient amount given
+  
+- **Non-Cash Payment:**
+  - Confirm button immediately enabled
+  - No change calculation needed
+
+#### Receipt Generation & Printing
+- **Receipt Format:**
+  - Fixed-width monospace text (Consolas, 42 chars wide)
+  - Logo image at top (optional, from branding settings)
+  - Business name (2 lines)
+  - Custom receipt header (from settings)
+  - Separator lines (═ for thick, ─ for thin)
+  
+- **Receipt Content:**
+  - Order number
+  - Date and time
+  - Table number (if set)
+  - Staff name (served by)
+  - Item listing with qty and amounts
+  - Total amount
+  - Payment method
+  - Amount received and change (for cash)
+  - Custom receipt footer
+
+- **Receipt Preview Window:**
+  - FlowDocument viewer
+  - Print button with Windows Print Dialog
+  - Close button
+  - Document cloning for print vs display
+
+#### Order Status Management
+- **Status Flow:**
+  - pending → preparing → ready → completed
+  - Can be set to cancelled at any point
+  - Can revert status (except completed is final)
+  
+- **Status Visual Indicators:**
+  - Each status has icon and color:
+    - ⏳ pending (yellow)
+    - 👨‍🍳 preparing (blue)
+    - ✅ ready (green)
+    - ✓ completed (gray)
+    - ❌ cancelled (red)
+
+#### Draft Saving
+- Save incomplete orders as drafts
+- Draft orders preserved with table #, notes, items
+- Can resume editing draft orders from history
+- Draft confirmation message shows order #
+
+#### Order Number Generation
+- Format: ORD-YYYYMMDD-HHmmss
+- Automatically generated on order creation
+- Unique across all orders
+
+---
+
+### **4. INVENTORY MANAGEMENT**
+
+#### Summary Cards (Top of View)
+- **Card 1:** Total items count (purple gradient)
+- **Card 2:** Total categories count (orange gradient)
+- **Card 3:** Low stock items count (red gradient)
+- **Card 4:** Out of stock items count (green gradient)
+- **Additional Display:** Total stock value in configured currency
+
+#### Search & Filtering
+- **Search Box:**
+  - Real-time search by item name, category, description
+  - 🔍 icon
+  
+- **Category Filter:**
+  - Dropdown with "All Categories" option
+  - Dynamically populated from inventory
+  - Shows item count in selected category
+  
+- **Status Filter:**
+  - All Items
+  - Low Stock (qty < min level)
+  - Out of Stock (qty = 0)
+  - In Stock (qty >= min level)
+
+#### Inventory Grid Display
+- **Columns:**
+  - Checkbox (multi-select)
+  - Category icon (emoji based on category)
+  - Item name (bold, dark text)
+  - Description (if any, gray text)
+  - Quantity with unit
+  - Unit type (kg, liters, boxes, etc.)
+  - Cost price (formatted currency)
+  - Stock value (formatted currency)
+  - Status with color indicator
+  - Stock level bar (visual representation)
+  - Action buttons (Edit, Delete)
+
+- **Status Indicators:**
+  - ✓ In Stock (green, #22c55e)
+  - ⚠ Low Stock (orange, #f97316)
+  - ❌ Out of Stock (red, #ef4444)
+  
+- **Stock Bar Visualization:**
+  - Shows quantity relative to min level
+  - Color matches status
+  - Max width 90 pixels
+
+#### Item Management
+- **Add New Item:**
+  - Name (required)
+  - Description (optional)
+  - Category (dropdown, searchable)
+  - Unit (kg, liters, boxes, heads, cases, etc.)
+  - Initial quantity
+  - Cost price
+  - Minimum level (reorder point)
+  - Reorder quantity (when to order)
+  - Form validation with error messages
+
+- **Edit Item:**
+  - Modify all fields
+  - Same form as add
+  - Confirmation message on save
+
+- **Delete Item:**
+  - Single item delete with confirmation
+  - Bulk delete with multi-select
+  - "Delete X item(s)" button
+  - Cannot undo warning
+
+#### Multi-Select Operations
+- **Selection Bar:**
+  - Shows when items selected
+  - Displays "N items selected"
+  - Cancel selection button
+  - Delete selected button
+  
+- **Select All:**
+  - Checkbox at top of grid
+  - Respects current filters
+  - Updates count display
+
+#### Category-Based Organization
+- **Preset Categories:**
+  - Proteins (🥩, red)
+  - Produce (🥬, green)
+  - Dry Goods (🌾, yellow)
+  - Beverages (🥤, blue)
+  - Dairy (🧀, purple)
+  - Spices (🧂, pink)
+  - Supplies (🧹, gray)
+  - Custom categories supported
+
+- **Icon Assignment:**
+  - Automatic emoji based on category name
+  - Customizable per category
+
+#### Stock Tracking Features
+- **Quantity Tracking:**
+  - Current quantity
+  - Unit type
+  - Min level threshold
+  - Reorder quantity
+  
+- **Cost Tracking:**
+  - Cost per unit (basis for valuation)
+  - Stock value calculation (qty × cost)
+  - Total inventory value across all items
+  
+- **Low Stock Alerts:**
+  - Dashboard shows count
+  - Color-coded display
+  - Shown in inventory summary
+  - Reorder suggestion based on reorder qty
+
+#### Seed Data (Demo Inventory)
+- **22 Pre-populated Items Including:**
+  - Proteins: Beef, Chicken, Salmon, Lamb, Prawns
+  - Produce: Mixed Veggies, Lettuce, Tomatoes, Onions, Mushrooms
+  - Dry Goods: Pasta, Rice, Flour, Olive Oil
+  - Beverages: Coffee Beans, Tea, Juice, Water
+  - Dairy: Butter, Cream, Cheese
+
+---
+
+### **5. REPORTS & ANALYTICS**
+
+#### Filter Options
+- **Time Period Buttons:**
+  - Today
+  - This Week
+  - This Month (default)
+  - This Year
+  - Custom date range (picker)
+- **Active Filter Highlighting:**
+  - Selected filter has gradient background (purple)
+  - Others have white background
+
+#### Summary Cards (Report View)
+- **Total Revenue:** Sum of completed orders
+- **Total Orders:** Count of all orders in period
+- **Completed Orders:** Count of completed status orders
+- **Average Order Value:** Total revenue ÷ completed orders
+- **Total Items Sold:** Sum of all order items quantities
+- **Period Comparison:** % change vs previous period (↑/↓ indicator)
+
+#### Revenue Chart
+- **Bar Chart Display:**
+  - Grouped by date
+  - Vertical bars with gradient (purple)
+  - Height represents revenue
+  - Hover tooltip shows date and amount
+  - Date labels (selective to avoid crowding)
+  - Canvas-based rendering
+  - Handles empty periods gracefully
+
+#### Payment Method Breakdown
+- **Bar Chart by Payment Type:**
+  - 💵 Cash
+  - 💳 Card
+  - 🏦 Bank Transfer
+  - 📱 Mobile Money
+  - ❓ Unknown
+  
+- **Per Method Display:**
+  - Method name with icon
+  - Total amount (formatted currency)
+  - Transaction count
+  - Percentage bar showing proportion
+  - Color-coded bars (varies per method)
+
+#### Additional Reports (Implemented)
+- **Order Status Distribution:**
+  - Count of orders in each status
+  - Visual breakdown
+  
+- **Top Items Sold:**
+  - Most popular items by quantity
+  - Revenue per item
+  
+- **Category Sales Analysis:**
+  - Sales by inventory category
+  - Revenue per category
+  
+- **Peak Hours Analysis:**
+  - Order volume by hour of day
+  - Revenue patterns
+  
+- **Staff Performance:**
+  - Orders processed per staff member
+  - Revenue attributed to staff
+  
+- **Daily Breakdown:**
+  - Day-by-day breakdown table
+  - Cumulative metrics
+
+#### Export Functionality
+- Data can be analyzed and formatted for export
+- Foundation for CSV/PDF export (code structure ready)
+
+---
+
+### **6. ADMIN SETTINGS**
+
+#### Settings Access
+- **Role-Based Access:**
+  - Developer only: Access to all tabs
+  - Admin: Limited access (Login, Users, Departments, Categories tabs)
+  - Staff: Cannot access settings
+- **Tab Visibility:**
+  - Branding (dev only)
+  - Login Settings (visible to all admins)
+  - Currency (dev only)
+  - Theme (dev only)
+  - Receipt (dev only)
+  - Users (all admins)
+  - Departments (all admins)
+  - Categories (all admins)
+  - Developer (dev only)
+
+#### Branding Tab
+- **Logo Management:**
+  - Emoji input field (short string of characters)
+  - Live preview of emoji
+  - Image upload button
+  - File picker (PNG, JPG, JPEG, BMP)
+  - Image stored in AppData/RestaurantManager/logos/
+  - Remove image button
+  - Remove clears logo image path
+  - Logo appears in login screen and window title bar
+  
+- **Business Name:**
+  - Line 1: "R E S T A U R A N T" (default, customizable)
+  - Line 2: "Manager" (default, customizable)
+  - Both shown on login screen
+  
+- **Customizable Text Fields:**
+  - Tagline
+  - Description
+  - Copyright text
+  - Window title
+  - Welcome title (login screen)
+  - Welcome subtitle (login screen)
+  
+- **Real-time Preview:**
+  - Emoji preview updates as typed
+  - Branding applied immediately after save
+
+#### Login Settings Tab
+- **Demo Account Toggle:**
+  - "Show Demo Login" checkbox
+  - When enabled: Demo account section visible on login
+  - When disabled: Only standard login form shown
+  - Default: Enabled
+  
+- **Demo Account Management:**
+  - Pre-configured demo accounts available when enabled
+  - Buttons for each account (one-click fill)
+  - Always use password: "password"
+
+#### Currency Tab
+- **Currency Configuration:**
+  - Symbol input (₦, R, $, €, £, ¥, ₹, R$)
+  - Currency code (NGN, ZAR, USD, EUR, GBP, JPY, INR, BRL)
+  - Position: Before or After amount
+  - Thousands separator (comma, period, space)
+  - Decimal separator (period, comma)
+  - Decimal places (0, 2, 3)
+  
+- **Currency Presets (8 included):**
+  - 🇿🇦 ZAR: R, position before, comma sep, period decimal, 2 places
+  - 🇺🇸 USD: $, position before, comma sep, period decimal, 2 places
+  - 🇪🇺 EUR: €, position before, period sep, comma decimal, 2 places
+  - 🇬🇧 GBP: £, position before, comma sep, period decimal, 2 places
+  - 🇯🇵 JPY: ¥, position before, comma sep, period decimal, 0 places
+  - 🇳🇬 NGN: ₦, position before, comma sep, period decimal, 2 places
+  - 🇮🇳 INR: ₹, position before, comma sep, period decimal, 2 places
+  - 🇧🇷 BRL: R$, position before, period sep, comma decimal, 2 places
+  
+- **Live Currency Preview:**
+  - Shows formatted sample amount
+  - Updates as settings change
+  - Display with selected symbol and separators
+
+#### Theme Tab
+- **Card Colors (4 Cards with Dual-Color Gradients):**
+  - Card 1: Color 1 (start) and Color 2 (end)
+  - Card 2: Color 1 (start) and Color 2 (end)
+  - Card 3: Color 1 (start) and Color 2 (end)
+  - Card 4: Color 1 (start) and Color 2 (end)
+  - All hex color inputs
+  
+- **Card Text Color:**
+  - Foreground color for all card text
+  - Hex color input
+  - Applied with 100% opacity and 80% opacity variants
+  
+- **Color Pickers:**
+  - Hex color input fields (#xxxxxx format)
+  - Real-time preview of gradient and text
+  
+- **Theme Presets (6 built-in):**
+  - Default (purple/orange/green/indigo)
+  - Ocean (cyan/teal/turquoise/indigo)
+  - Sunset (pink/orange/yellow/magenta)
+  - Forest (green/lime/teal/teal)
+  - Candy (magenta/purple/pink/purple)
+  - Midnight (indigo/purple/violet/indigo)
+
+#### Receipt Tab
+- **Receipt Header:**
+  - Multi-line text field
+  - Supports line breaks
+  - Centered on receipt
+  - Appears after business name
+  
+- **Receipt Footer:**
+  - Multi-line text field
+  - Default: "Thank you for your patronage!"
+  - Customizable message
+  - Appears at end of receipt
+
+#### Users Tab
+- **User List Display:**
+  - Avatar (gradient circle with 👤 icon)
+  - User name (bold, dark text)
+  - Email
+  - Roles (comma-separated, title case)
+  - Department (if assigned)
+  - Delete button (cannot delete self)
+  
+- **Create New User:**
+  - Name input
+  - Email input
+  - Password input
+  - Role checkboxes:
+    - Staff (default)
+    - Admin
+    - Developer (dev only)
+  - Department dropdown (with "— None —" option)
+  - Create button
+  - Validation: All required fields
+  - Success/error message display
+  - Form clears on success
+
+- **Delete User:**
+  - Confirmation dialog
+  - Cannot delete current logged-in user
+  - Immediate feedback message
+  - List refreshes after delete
+
+#### Departments Tab
+- **Department List Display:**
+  - Department icon (emoji, colored background)
+  - Department name
+  - User count assigned
+  - Edit button (✏)
+  - Delete button (🗑)
+  
+- **Department Details:**
+  - Assigned users shown as chips/badges
+  - Remove button (✕) on each chip
+  - Unassigned users in dropdown
+  - Add button to assign users
+  
+- **Edit Department (Inline):**
+  - Name field
+  - Icon field (emoji)
+  - Color field (hex)
+  - Save button (💾)
+  - Cancel button (✕)
+  - Inline edit panel toggles
+  
+- **Create Department:**
+  - New department form
+  - Name (required)
+  - Icon
+  - Color
+  - Initial state: no users assigned
+  
+- **Delete Department:**
+  - Confirmation required
+  - Cannot undo
+  - Removes all user assignments
+
+#### Categories Tab
+- **Category Management:**
+  - Similar to departments
+  - Name
+  - Icon (emoji)
+  - Color
+  - Create, edit, delete operations
+  - For organizing inventory items
+
+#### Developer Tab
+- **Developer-Only Settings:**
+  - Show Demo Login toggle
+  - Trademark text field
+  - All other customization options
+  - Used for branding the application
+  
+- **Trademark Settings:**
+  - Custom trademark text
+  - Default: "Powered by Restaurant Manager"
+  - Displayed in sidebar and footer
+
+#### Save & Status Messages
+- **Status Feedback:**
+  - Green message on successful save
+  - Red message on errors
+  - Displays for settings changes
+  - Auto-clears after operation
+
+#### Card Color Preview
+- **Real-time Preview:**
+  - 4 gradient cards displayed
+  - Shows actual colors as typed
+  - Text color applied to preview
+  - Updates without needing to save
+
+---
+
+### **7. DATABASE & DATA PERSISTENCE**
+
+#### Database Engine
+- **SQLite Database:**
+  - File-based, stored in AppData
+  - Path: `%APPDATA%/RestaurantManager/restaurant.db`
+  - Auto-created if missing
+  - Persistent across sessions
+
+#### Database Entities
+- **Users Table:** Stores user accounts, roles, departments
+- **Orders Table:** Order records with status, payment method, totals
+- **OrderItems Table:** Line items within orders (linking to inventory)
+- **MenuItems Table:** Optional menu database (not actively used)
+- **InventoryItems Table:** Inventory stock tracking
+- **InventoryLogs Table:** History of quantity changes
+- **Categories Table:** Item category definitions
+- **Departments Table:** Staff department definitions
+- **UserDepartments Table:** Many-to-many user-department links
+- **CategoryDepartments Table:** Many-to-many category-department links
+- **SyncLogs Table:** Tracks changes for sync purposes
+- **BrandingSettings Table:** Single-row settings storage
+
+#### Automatic Migrations
+- **Schema Upgrades:**
+  - Automatically runs on startup
+  - Creates new tables if missing
+  - Adds missing columns to existing tables
+  - Handles legacy column renames (MenuItemId → InventoryItemId)
+  - Adds PaymentMethod column to Orders
+  - Adds ReceiptHeader/Footer to BrandingSettings
+  - Adds ShowDemoLogin, TrademarkText, etc.
+  
+- **Seed Data (On First Run):**
+  - 6 Demo users (dev, admin, chef, waiter, bartender, cashier)
+  - 4 Menu items (Burger, Salad, Pasta, Coffee)
+  - 22 Inventory items (proteins, produce, dry goods, beverages, dairy)
+  - 7 Categories (Proteins, Produce, Dry Goods, Beverages, Dairy, Spices, Supplies)
+  - 3 Departments (Eatery/Restaurant, Lounge, Shawarma Spot)
+
+#### Data Relationships
+- **One-to-Many:**
+  - Order → OrderItems (cascade delete)
+  - InventoryItem → InventoryLogs
+  - Department → UserDepartments (cascade delete)
+  - Category → CategoryDepartments (cascade delete)
+  
+- **Many-to-Many:**
+  - User ↔ Department (via UserDepartment)
+  - Category ↔ Department (via CategoryDepartment)
+  
+- **Foreign Keys:**
+  - All foreign key relationships enforced
+  - Cascade delete on dependent records
+  - Unique constraints on key fields (Email, OrderNumber, UserDepartment combo, CategoryDepartment combo)
+
+#### Data Indexing
+- **Performance Optimizations:**
+  - Index on Order.OrderNumber (unique)
+  - Index on Order.CreatedAt
+  - Index on User.Email (unique)
+  - Index on UserDepartment (UserId, DepartmentId) - unique
+  - Index on CategoryDepartment (CategoryId, DepartmentId) - unique
+
+#### Sync System (Infrastructure Ready)
+- **SyncService:**
+  - Tracks pending changes in SyncLogs
+  - Processes offline changes when online
+  - Fetches latest data from server
+  - Handles orders, inventory, menu items
+  - Base URL: http://localhost:8000/api
+  - Health check endpoint
+  - Sync endpoints: /sync, /orders, /inventory, /menu-items
+
+---
+
+### **8. CORE SERVICES & BUSINESS LOGIC**
+
+#### OrderService
+- **Operations:**
+  - Get all orders (with items and inventory details)
+  - Get single order by ID
+  - Create order (with sync logging)
+  - Update order (with sync logging)
+  - Delete order (with sync logging)
+- **Relationships:**
+  - Loads related OrderItems
+  - Loads InventoryItem details for each item
+  - Orders by creation date (descending)
+
+#### InventoryService
+- **Operations:**
+  - Get all items (sorted by name)
+  - Get item by ID
+  - Create item (with sync logging)
+  - Update item (with sync logging)
+  - Update quantity (with inventory log)
+  - Delete item (with sync logging)
+  - Get categories list (distinct from items)
+  - Get low stock items (quantity < min level)
+- **Calculations:**
+  - Stock value = quantity × cost price
+  - Reorder logic based on min level
+
+#### UserService
+- **Operations:**
+  - Get user by email
+  - Authenticate (email + password check)
+  - Get all users (sorted by name)
+  - Create user
+  - Delete user
+- **Authentication:**
+  - Simple password matching (not hashed in demo)
+  - Email-based login
+
+#### CategoryService
+- **Operations:**
+  - Get all categories
+  - Create category
+  - Update category
+  - Delete category
+- **Fields:**
+  - Name (unique identifier)
+  - Icon (emoji)
+  - Color (hex)
+
+#### DepartmentService
+- **Operations:**
+  - Get all departments
+  - Create department
+  - Update department
+  - Delete department
+  - Get users in department
+  - Assign user to department
+  - Remove user from department
+  - Get departments for user
+- **Many-to-Many Support:**
+  - Multiple users per department
+  - Multiple departments per user
+
+#### BrandingService
+- **Operations:**
+  - Get settings (creates default if missing)
+  - Save settings (update or insert)
+- **Singleton Pattern:**
+  - Only one branding settings record
+  - Creates defaults if no record exists
+- **Comprehensive Settings:**
+  - Branding (logo, business name, tagline)
+  - Authentication (welcome text, demo account toggle)
+  - Currency (symbol, code, position, format)
+  - Theme (4-card colors, text color)
+  - Receipt (header, footer)
+  - Developer (trademark, demo toggle)
+
+---
+
+### **9. USER INTERFACE & DESIGN**
+
+#### Overall Design System
+- **Framework:** WPF with FluentUI (Wpf.UI)
+- **Color Scheme:**
+  - Primary: Purple gradient (#667eea → #764ba2)
+  - Accent colors: Orange, Green, Indigo
+  - Backgrounds: Light neutral (#f0f2f5)
+  - Text: Dark (#0f172a), Medium (#334155), Light (#94a3b8)
+  
+- **Typography:**
+  - Headers: Bold, larger font
+  - Body: Regular, 12-13px
+  - Small text: 10-11px
+  - Monospace: Consolas (for receipts)
+
+#### Layout System
+- **Main Window:**
+  - Mica backdrop effect
+  - Title bar with title
+  - Two-column layout: Sidebar + Content area
+  - Sidebar width: 250px
+
+- **Sidebar Navigation:**
+  - User info card at top (with avatar)
+  - Navigation section with indicators
+  - Navigation items with emoji icons
+  - Bottom: Status, logout, trademark
+  - Logout button in red
+  
+- **Main Content Area:**
+  - Scrollable content region
+  - Trademark footer at bottom
+  - Context-specific views loaded into content area
+
+#### UI Components
+- **Cards:**
+  - Drop shadow (2px, 12px blur, 6% opacity)
+  - Rounded corners (16px)
+  - White background with padding
+  - Hover states
+  
+- **Buttons:**
+  - Multiple styles (primary gradient, secondary, danger)
+  - Hover state with opacity change
+  - Active/pressed state with scale transform
+  - Disabled state at 50% opacity
+  - Rounded corners (10-12px)
+  
+- **Input Fields:**
+  - White background
+  - Light border (#e2e8f0)
+  - Focus state: darker border (purple)
+  - Padding for touch targets
+  
+- **Gradients:**
+  - Linear gradients (0° to 45° angles)
+  - Multiple color stops
+  - Applied to cards, buttons, backgrounds
+  
+- **Status Indicators:**
+  - Color-coded badges
+  - Emoji icons
+  - Background fills matching status
+  
+- **Icons:**
+  - Emoji throughout for visual communication
+  - Category-specific icons (🥩, 🥬, 🌾, 🥤, 🧀, etc.)
+
+#### Responsive & Accessible Design
+- **Window Management:**
+  - Minimum size: 1400×780
+  - Centered on screen at startup
+  - Remembers position/size (via OS)
+  
+- **Dialog Management:**
+  - Modal overlays with semi-transparent background
+  - Centered on screen
+  - Keyboard support (Escape to close)
+  
+- **Focus Management:**
+  - Tab order on forms
+  - Focus restoration after operations
+  
+- **User Feedback:**
+  - Success/error messages with color coding
+  - Loading indicators for async operations
+  - Confirmation dialogs for destructive actions
+
+---
+
+### **10. TECHNICAL ARCHITECTURE**
+
+#### Application Startup
+- **OnStartup in App.xaml.cs:**
+  - Initialize database context
+  - Create all service instances
+  - Run database migrations
+  - Seed demo data if needed
+  - Show main window or login window
+  - Handle global exceptions
+  
+- **Service Injection:**
+  - Global static instances (App.OrderService, etc.)
+  - Available throughout application
+  - Dependency initialized once
+
+#### Error Handling
+- **Global Exception Handler:**
+  - Catches unhandled exceptions
+  - Shows error dialog
+  - Logs to temp file (RestaurantManager_Error.log)
+  - Allows application recovery
+  
+- **Local Try-Catch:**
+  - Service call failures handled gracefully
+  - User-friendly error messages
+  - Status message display
+
+#### Database Context
+- **RestaurantDbContext:**
+  - Extends DbContext
+  - Configures SQLite connection
+  - Defines all entity DbSets
+  - Manages migrations
+  
+- **Configuration:**
+  - One-to-many relationships defined
+  - Indexes created for performance
+  - Foreign key constraints
+  - Delete behaviors (cascade, set null)
+
+#### Data Binding
+- **XAML Binding:**
+  - ItemsSource for lists
+  - Text bindings for display
+  - Visibility binding for conditional UI
+  
+- **Code-Behind Updates:**
+  - Manual UI refresh in many cases
+  - DataGrid.Items.Refresh() called after changes
+  - Re-rendering of complex panels
+
+---
+
+### **11. SETTINGS & CONFIGURATION**
+
+#### Branding Settings Properties (BrandingSettings Model)
+- **Logo:** LogoEmoji, LogoImagePath
+- **Business Branding:** BusinessNameLine1, BusinessNameLine2, Tagline, Description, CopyrightText
+- **Window & Login:** WindowTitle, WelcomeTitle, WelcomeSubtitle
+- **Currency:** CurrencySymbol, CurrencyCode, CurrencyPosition, ThousandsSeparator, DecimalSeparator, DecimalPlaces
+- **Theme Colors:** Card1Color1, Card1Color2, Card2Color1, Card2Color2, Card3Color1, Card3Color2, Card4Color1, Card4Color2, CardTextColor
+- **Receipt:** ReceiptHeader, ReceiptFooter
+- **Developer:** ShowDemoLogin, TrademarkText
+- **Timestamps:** UpdatedAt (tracks last modification)
+
+#### Currency Formatting
+- **FormatCurrency Method:**
+  - Takes decimal amount
+  - Applies number format (N{DecimalPlaces})
+  - Platforms currency position (before/after)
+  - Applies separators
+  - Returns formatted string
+  - Used throughout for display
+
+---
+
+### **SUMMARY OF KEY FEATURES**
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| **Multi-user Login** | ✓ Active | Role-based access control, demo accounts |
+| **Dashboard** | ✓ Active | 4 stat cards, status breakdown, recent orders, low stock alerts |
+| **Order Management** | ✓ Active | Multi-tab creation, payment processing, receipt printing, history with filters |
+| **Inventory** | ✓ Active | Stock tracking, multi-select operations, category filtering, low stock alerts |
+| **Reports** | ✓ Active | Revenue charts, payment breakdown, performance analytics, date filtering |
+| **Admin Settings** | ✓ Active | Branding, currency, theme, users, departments, categories, receipt customization |
+| **Database** | ✓ SQLite | Persistent storage, auto-migrations, seed data |
+| **Branding** | ✓ Full | Logo emoji/image, custom business name, window title, colors |
+| **Currency** | ✓ Full | 8 presets, custom symbol, format options, live preview |
+| **Theme** | ✓ 6 Presets | Color customization, gradient cards, 4-card system |
+| **Multi-Language Ready** | ◐ Partial | UI structure supports it; currently English only |
+| **Sync Service** | ⚠ Foundation | Infrastructure ready, needs backend server |
+| **Receipt Printing** | ✓ Full | Format customization, logo support, preview window, Windows Print integration |
+
+---
+
+This comprehensive inventory covers **every feature** found in the RestaurantManager WPF application, including all settings, databases, services, and user-facing functionality.

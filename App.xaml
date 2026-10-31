@@ -1,0 +1,80 @@
+<Application x:Class="RestaurantManager.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:infra="clr-namespace:RestaurantManager.Services.Infrastructure">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Light"/>
+                <ui:ControlsDictionary/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <infra:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+
+            <!-- Colors -->
+        <Color x:Key="PrimaryColor">#667eea</Color>
+        <Color x:Key="SecondaryColor">#764ba2</Color>
+        <Color x:Key="DarkBg">#1a1a2e</Color>
+        <Color x:Key="LightBg">#f5f7fa</Color>
+        <Color x:Key="CardBg">#ffffff</Color>
+        <Color x:Key="TextPrimary">#2c3e50</Color>
+        <Color x:Key="TextSecondary">#7f8c8d</Color>
+        <Color x:Key="Border">#ecf0f1</Color>
+        
+        <!-- Brushes -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#667eea"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="#764ba2"/>
+        <SolidColorBrush x:Key="DarkBgBrush" Color="#1a1a2e"/>
+        <SolidColorBrush x:Key="LightBgBrush" Color="#f5f7fa"/>
+        <SolidColorBrush x:Key="CardBgBrush" Color="#ffffff"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#2c3e50"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#7f8c8d"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#ecf0f1"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#27ae60"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="#e67e22"/>
+        <SolidColorBrush x:Key="DangerBrush" Color="#e74c3c"/>
+        
+        <!-- Button Styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <!-- TextBox Styles -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

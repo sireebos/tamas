@@ -1,0 +1,785 @@
+<UserControl x:Class="RestaurantManager.Views.OrdersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="OrdCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="18"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="16" Color="#000" Opacity="0.07"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="OrdBtn" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="12"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CatTab" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="18,6"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#64748b"/>
+            <Setter Property="Background" Value="#f1f5f9"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="IconAction" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8"
+                                ToolTip="{TemplateBinding ToolTip}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernScrollBar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="5"/>
+                            <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsEnabled}">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border x:Name="thumbBd" Background="#cbd5e1" CornerRadius="5"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="true">
+                                                        <Setter TargetName="thumbBd" Property="Background" Value="#94a3b8"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="true">
+                                                        <Setter TargetName="thumbBd" Property="Background" Value="#64748b"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="5"/>
+                                    <Track x:Name="PART_Track" IsDirectionReversed="false" IsEnabled="{TemplateBinding IsEnabled}">
+                                        <Track.Thumb>
+                                            <Thumb x:Name="Thumb">
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                                        <Border x:Name="thumbBd" Background="#cbd5e1" CornerRadius="5"/>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="true">
+                                                                <Setter TargetName="thumbBd" Property="Background" Value="#94a3b8"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsDragging" Value="true">
+                                                                <Setter TargetName="thumbBd" Property="Background" Value="#64748b"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{StaticResource ModernScrollBar}"/>
+                            <ScrollBar x:Name="PART_HorizontalScrollBar" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Style="{StaticResource ModernScrollBar}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#f0f2f5">
+        <!-- Tab system: New Order vs Order History -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══ TOP BAR ═══ -->
+        <Grid Grid.Row="0" Margin="28,24,28,8">
+            <StackPanel Orientation="Horizontal">
+                <!-- Back Button -->
+                <Button Style="{StaticResource OrdBtn}" Background="#f1f5f9" Click="BackBtn_Click" Margin="0,0,14,0" Padding="10,0" Height="46" VerticalAlignment="Center">
+                    <TextBlock Text="← Back" FontSize="13" FontWeight="SemiBold" Foreground="#475569" VerticalAlignment="Center"/>
+                </Button>
+                <Border CornerRadius="14" Width="46" Height="46" Margin="0,0,14,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#667eea" Offset="0"/>
+                            <GradientStop Color="#764ba2" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock Text="🧾" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Orders" FontSize="24" FontWeight="Bold" Foreground="#0f172a"/>
+                    <TextBlock Text="Create and manage restaurant orders" FontSize="12" Foreground="#64748b" Margin="0,2,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button x:Name="TabNewOrder" Style="{StaticResource OrdBtn}" Click="TabNewOrder_Click" Margin="0,0,8,0">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#667eea" Offset="0"/>
+                            <GradientStop Color="#764ba2" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="＋" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="New Order" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="TabOrderHistory" Style="{StaticResource OrdBtn}" Background="#475569" Click="TabOrderHistory_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="📋" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Previous Orders" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- ═══ ORDER TABS STRIP ═══ -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" PanningMode="Both" VerticalScrollBarVisibility="Disabled" Margin="28,0,28,8">
+            <StackPanel x:Name="OrderTabsStrip" Orientation="Horizontal"/>
+        </ScrollViewer>
+
+        <!-- ═══════════ NEW ORDER PANEL ═══════════ -->
+        <Grid x:Name="NewOrderPanel" Grid.Row="2" Margin="28,0,28,28">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="380"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: Menu Items -->
+            <Border Grid.Column="0" Style="{StaticResource OrdCard}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Menu Header with Search -->
+                    <Grid Grid.Row="0" Margin="0,0,0,14">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Menu Items" FontSize="16" FontWeight="Bold" Foreground="#0f172a" Margin="0,0,0,10"/>
+                        <Border Grid.Row="1" Background="White" CornerRadius="12" BorderBrush="#cbd5e1" BorderThickness="1.5"
+                                Padding="4,0" Height="44">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="10,0,8,0"/>
+                                <TextBox x:Name="MenuSearchBox" Grid.Column="1" Padding="4,10" FontSize="15"
+                                         Background="Transparent" BorderThickness="0" Foreground="#1e293b"
+                                         TextChanged="MenuSearch_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Category Tabs -->
+                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" PanningMode="Both" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,8">
+                        <StackPanel x:Name="MenuCategoryTabs" Orientation="Horizontal" Margin="0,0,0,6"/>
+                    </ScrollViewer>
+
+                    <!-- SubCategory Tabs -->
+                    <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" PanningMode="Both" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,14" x:Name="SubCategoryScrollViewer">
+                        <StackPanel x:Name="MenuSubCategoryTabs" Orientation="Horizontal" Margin="0,0,0,6"/>
+                    </ScrollViewer>
+
+                    <!-- Menu Items Grid -->
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" PanningMode="Both">
+                        <WrapPanel x:Name="MenuItemsPanel" Orientation="Horizontal"/>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- RIGHT: Order Summary -->
+            <Border Grid.Column="2" Style="{StaticResource OrdCard}" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Order Header -->
+                    <Border Grid.Row="0" Padding="20,16,20,12">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#667eea" Offset="0"/>
+                                <GradientStop Color="#764ba2" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock x:Name="OrderHeaderTitle" Text="New Order" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock x:Name="OrderHeaderSub" Text="Add items from the menu" FontSize="11" Foreground="#ffffffaa" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Button Style="{StaticResource IconAction}" Background="#ef4444" ToolTip="Clear order"
+                                    HorizontalAlignment="Right" VerticalAlignment="Center" Click="ClearOrder_Click"
+                                    Width="34" Height="34">
+                                <TextBlock Text="✕" FontSize="15" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Table / Notes -->
+                    <Border Grid.Row="1" Background="#f8fafc" Padding="20,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="TABLE #" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,4"/>
+                                <TextBox x:Name="OrderTableNumber" Width="70" Padding="10,7" FontSize="13" FontWeight="Bold"
+                                         Background="White" BorderBrush="#e2e8f0" BorderThickness="1.5" TextAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="NOTES" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,4"/>
+                                <TextBox x:Name="OrderNotes" Padding="10,7" FontSize="12"
+                                         Background="White" BorderBrush="#e2e8f0" BorderThickness="1.5"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Order Items List -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" PanningMode="Both" Padding="0">
+                        <StackPanel x:Name="OrderItemsPanel" Margin="0"/>
+                    </ScrollViewer>
+
+                    <!-- Empty state -->
+                    <StackPanel x:Name="OrderEmptyState" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="🛒" FontSize="40" HorizontalAlignment="Center" Opacity="0.4"/>
+                        <TextBlock Text="No items added yet" FontSize="13" Foreground="#94a3b8" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBlock Text="Click menu items to add them" FontSize="11" Foreground="#cbd5e1" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <!-- Totals -->
+                    <Border Grid.Row="3" Background="#f8fafc" Padding="20,14">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Subtotal" FontSize="12" Foreground="#64748b"/>
+                                <TextBlock x:Name="SubtotalText" Text="0.00" FontSize="12" Foreground="#64748b" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Items" FontSize="12" Foreground="#64748b"/>
+                                <TextBlock x:Name="ItemCountText" Text="0" FontSize="12" Foreground="#64748b" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Border BorderBrush="#e2e8f0" BorderThickness="0,1,0,0" Padding="0,8,0,0">
+                                <Grid>
+                                    <TextBlock Text="Total" FontSize="16" FontWeight="Bold" Foreground="#0f172a"/>
+                                    <TextBlock x:Name="TotalText" Text="0.00" FontSize="20" FontWeight="Bold" Foreground="#22c55e" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Action Buttons -->
+                    <Border Grid.Row="4" Padding="16,12,16,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Style="{StaticResource OrdBtn}" Background="#f1f5f9" Foreground="#475569" 
+                                    Click="SaveDraft_Click" Height="44">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📝" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Save Draft" VerticalAlignment="Center" Foreground="#475569"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2" Style="{StaticResource OrdBtn}" Click="PlaceOrder_Click" Height="44">
+                                <Button.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#22c55e" Offset="0"/>
+                                        <GradientStop Color="#16a34a" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Button.Background>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🚀" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Place Order" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════ ORDER HISTORY PANEL ═══════════ -->
+        <Grid x:Name="OrderHistoryPanel" Grid.Row="2" Margin="28,0,28,28" Visibility="Collapsed">
+            <Border Style="{StaticResource OrdCard}" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Filters Bar -->
+                    <Border Grid.Row="0" Background="#f8fafc" Padding="20,14" CornerRadius="18,18,0,0">
+                        <StackPanel>
+                            <!-- Row 1: Search + Status + Count -->
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="SelectAllOrders" VerticalAlignment="Center" Margin="0,0,10,0"
+                                              ToolTip="Select All" Click="SelectAllOrders_Click"/>
+                                    <Border Background="White" CornerRadius="10" BorderBrush="#e2e8f0" BorderThickness="1.5" Margin="0,0,10,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🔍" FontSize="12" VerticalAlignment="Center" Margin="10,0,6,0"/>
+                                            <TextBox x:Name="OrderSearchBox" Width="300" Padding="4,8" FontSize="13"
+                                                     Background="Transparent" BorderThickness="0" Foreground="#1e293b"
+                                                     TextChanged="OrderSearch_Changed"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="White" CornerRadius="10" BorderBrush="#e2e8f0" BorderThickness="1.5" Padding="8,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="📊" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                            <ComboBox x:Name="HistoryStatusFilter" Width="130" Padding="4,7" FontSize="11"
+                                                      Background="Transparent" BorderThickness="0" SelectionChanged="HistoryStatusFilter_Changed">
+                                                <ComboBoxItem Content="All Orders" IsSelected="True"/>
+                                                <ComboBoxItem Content="Pending"/>
+                                                <ComboBoxItem Content="Preparing"/>
+                                                <ComboBoxItem Content="Ready"/>
+                                                <ComboBoxItem Content="Completed"/>
+                                                <ComboBoxItem Content="Cancelled"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button x:Name="DeleteSelectedBtn" Visibility="Collapsed" Click="DeleteSelected_Click"
+                                            Background="#fef2f2" Foreground="#ef4444" FontSize="12" FontWeight="Bold"
+                                            BorderThickness="1" Padding="12,6" Cursor="Hand" Margin="0,0,10,0">
+                                        <Button.BorderBrush>
+                                            <SolidColorBrush Color="#fecaca"/>
+                                        </Button.BorderBrush>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🗑" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="DeleteSelectedText" Text="Delete Selected" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Border Background="#eff6ff" CornerRadius="8" Padding="10,6">
+                                        <TextBlock x:Name="OrderCountText" Text="0 orders" FontSize="11" Foreground="#667eea" FontWeight="Bold"/>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Row 2: Date Filters -->
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="📅" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <Button x:Name="DateFilterAll" Content="All Time" Click="DateFilterAll_Click"
+                                        Height="30" Padding="14,0" FontSize="11" FontWeight="SemiBold"
+                                        Background="#667eea" Foreground="White" BorderThickness="0" Cursor="Hand" Margin="0,0,4,0"/>
+                                <Button x:Name="DateFilterToday" Content="Today" Click="DateFilterToday_Click"
+                                        Height="30" Padding="14,0" FontSize="11" FontWeight="SemiBold"
+                                        Background="#f1f5f9" Foreground="#64748b" BorderThickness="0" Cursor="Hand" Margin="0,0,4,0"/>
+                                <Button x:Name="DateFilterYesterday" Content="Yesterday" Click="DateFilterYesterday_Click"
+                                        Height="30" Padding="14,0" FontSize="11" FontWeight="SemiBold"
+                                        Background="#f1f5f9" Foreground="#64748b" BorderThickness="0" Cursor="Hand" Margin="0,0,4,0"/>
+                                <Button x:Name="DateFilterRange" Content="Date Range" Click="DateFilterRange_Click"
+                                        Height="30" Padding="14,0" FontSize="11" FontWeight="SemiBold"
+                                        Background="#f1f5f9" Foreground="#64748b" BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"/>
+                                <StackPanel x:Name="DateRangePickers" Orientation="Horizontal" Visibility="Collapsed">
+                                    <TextBlock Text="From:" FontSize="11" Foreground="#64748b" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <DatePicker x:Name="DateFrom" Width="130" FontSize="11" SelectedDateChanged="DateRange_Changed" Margin="0,0,8,0"/>
+                                    <TextBlock Text="To:" FontSize="11" Foreground="#64748b" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <DatePicker x:Name="DateTo" Width="130" FontSize="11" SelectedDateChanged="DateRange_Changed"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Orders List -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" PanningMode="Both" Padding="20,14">
+                        <StackPanel x:Name="OrderHistoryList"/>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════ ORDER DETAIL / EDIT OVERLAY ═══════════ -->
+        <Grid x:Name="OrderDetailOverlay" Grid.RowSpan="3" Visibility="Collapsed">
+            <Border Background="#000" Opacity="0.5" MouseDown="CloseOrderDetail_Click"/>
+            <Border Width="720" MaxHeight="800" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    CornerRadius="22" ClipToBounds="True">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="10" BlurRadius="40" Color="#000" Opacity="0.2"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Padding="24,18,24,14">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#667eea" Offset="0"/>
+                                <GradientStop Color="#764ba2" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock x:Name="DetailTitle" Text="Order #001" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock x:Name="DetailSubtitle" Text="Created: ..." FontSize="11" Foreground="#ffffffaa" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Button Content="✕" Background="Transparent" BorderThickness="0" FontSize="16" Foreground="#ffffffcc"
+                                    HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="Hand" Click="CloseOrderDetail_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Background="White" Padding="24,18,24,20">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="Both">
+                            <StackPanel>
+                                <!-- Status selector -->
+                                <TextBlock Text="STATUS" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="DetailStatusCombo" Padding="12,10" FontSize="13" Margin="0,0,0,16"
+                                          Background="#f8fafc" BorderBrush="#e2e8f0" BorderThickness="1.5">
+                                    <ComboBoxItem Content="pending"/>
+                                    <ComboBoxItem Content="preparing"/>
+                                    <ComboBoxItem Content="ready"/>
+                                    <ComboBoxItem Content="completed"/>
+                                    <ComboBoxItem Content="cancelled"/>
+                                </ComboBox>
+
+                                <!-- Table + Notes -->
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="TABLE #" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,4"/>
+                                        <TextBox x:Name="DetailTable" Width="70" Padding="10,8" FontSize="13" FontWeight="Bold"
+                                                 Background="#f8fafc" BorderBrush="#e2e8f0" BorderThickness="1.5" TextAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="NOTES" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,4"/>
+                                        <TextBox x:Name="DetailNotes" Padding="10,8" FontSize="12"
+                                                 Background="#f8fafc" BorderBrush="#e2e8f0" BorderThickness="1.5"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Items list -->
+                                <TextBlock Text="ORDER ITEMS" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,8"/>
+                                <StackPanel x:Name="DetailItemsList"/>
+
+                                <!-- Total -->
+                                <Border Background="#f8fafc" CornerRadius="10" Padding="16,10" Margin="0,14,0,0">
+                                    <Grid>
+                                        <TextBlock Text="Total" FontSize="14" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DetailTotal" Text="0.00" FontSize="18" FontWeight="Bold" Foreground="#22c55e"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Actions -->
+                                <Grid Margin="0,18,0,0">
+                                    <TextBlock x:Name="DetailStatus" Text="" FontSize="11" Foreground="#22c55e" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="Cancel" Style="{StaticResource OrdBtn}" Background="#e2e8f0" Foreground="#475569"
+                                                Click="CloseOrderDetail_Click" Margin="0,0,8,0"/>
+                                        <Button x:Name="DetailPayBtn" Style="{StaticResource OrdBtn}" Click="PayNow_Click" Margin="0,0,8,0">
+                                            <Button.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#22c55e" Offset="0"/>
+                                                    <GradientStop Color="#16a34a" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Button.Background>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="💳" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Pay Now" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button x:Name="DetailPrintBtn" Style="{StaticResource OrdBtn}" Click="PrintFromHistory_Click" Margin="0,0,8,0" Visibility="Collapsed">
+                                            <Button.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#0ea5e9" Offset="0"/>
+                                                    <GradientStop Color="#0284c7" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Button.Background>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="🖨" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Print Receipt" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button x:Name="DetailSaveBtn" Content="💾 Update Order" Style="{StaticResource OrdBtn}" Click="UpdateOrder_Click">
+                                            <Button.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#667eea" Offset="0"/>
+                                                    <GradientStop Color="#764ba2" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Button.Background>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════ PAYMENT OVERLAY ═══════════ -->
+        <Grid x:Name="PaymentOverlay" Grid.RowSpan="3" Visibility="Collapsed">
+            <Border Background="#000" Opacity="0.5" MouseDown="ClosePayment_Click"/>
+            <Border Width="720" MaxHeight="800" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    CornerRadius="22" ClipToBounds="True">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="10" BlurRadius="40" Color="#000" Opacity="0.2"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Border Grid.Row="0" Padding="24,18,24,14">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#22c55e" Offset="0"/>
+                                <GradientStop Color="#16a34a" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="💳 Payment" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock x:Name="PaymentSubtitle" Text="Select payment method" FontSize="11" Foreground="#ffffffaa" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Button Content="✕" Background="Transparent" BorderThickness="0" FontSize="16" Foreground="#ffffffcc"
+                                    HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="Hand" Click="ClosePayment_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Body -->
+                    <Border Grid.Row="1" Background="White" Padding="24,18,24,20">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="Both">
+                            <StackPanel>
+                                <!-- Order Total -->
+                                <Border Background="#f0fdf4" CornerRadius="12" Padding="18,14" Margin="0,0,0,18">
+                                    <Grid>
+                                        <TextBlock Text="Order Total" FontSize="14" FontWeight="SemiBold" Foreground="#166534" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="PaymentTotalText" Text="₦ 0.00" FontSize="22" FontWeight="Bold" Foreground="#16a34a"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Payment Methods -->
+                                <TextBlock Text="PAYMENT METHOD" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,10"/>
+                                <StackPanel x:Name="PaymentMethodsPanel" Margin="0,0,0,18">
+                                    <Border x:Name="PayCash" CornerRadius="12" BorderBrush="#e2e8f0" BorderThickness="2" Padding="14,12"
+                                            Margin="0,0,0,8" Cursor="Hand" MouseDown="PaymentMethod_Click" Tag="cash" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="💵" FontSize="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Cash" FontSize="14" FontWeight="SemiBold" Foreground="#0f172a"/>
+                                                <TextBlock Text="Pay with cash" FontSize="11" Foreground="#94a3b8"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="PayTransfer" CornerRadius="12" BorderBrush="#e2e8f0" BorderThickness="2" Padding="14,12"
+                                            Margin="0,0,0,8" Cursor="Hand" MouseDown="PaymentMethod_Click" Tag="transfer" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🏦" FontSize="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Bank Transfer" FontSize="14" FontWeight="SemiBold" Foreground="#0f172a"/>
+                                                <TextBlock Text="Direct bank transfer" FontSize="11" Foreground="#94a3b8"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="PayPOS" CornerRadius="12" BorderBrush="#e2e8f0" BorderThickness="2" Padding="14,12"
+                                            Margin="0,0,0,8" Cursor="Hand" MouseDown="PaymentMethod_Click" Tag="pos" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="💳" FontSize="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="POS" FontSize="14" FontWeight="SemiBold" Foreground="#0f172a"/>
+                                                <TextBlock Text="POS terminal payment" FontSize="11" Foreground="#94a3b8"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="PayCashTransfer" CornerRadius="12" BorderBrush="#e2e8f0" BorderThickness="2" Padding="14,12"
+                                            Margin="0,0,0,8" Cursor="Hand" MouseDown="PaymentMethod_Click" Tag="cash_transfer" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="💵🏦" FontSize="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Cash &amp; Transfer" FontSize="14" FontWeight="SemiBold" Foreground="#0f172a"/>
+                                                <TextBlock Text="Split: part cash, part transfer" FontSize="11" Foreground="#94a3b8"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="PayCashPOS" CornerRadius="12" BorderBrush="#e2e8f0" BorderThickness="2" Padding="14,12"
+                                            Cursor="Hand" MouseDown="PaymentMethod_Click" Tag="cash_pos" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="💵💳" FontSize="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Cash &amp; POS" FontSize="14" FontWeight="SemiBold" Foreground="#0f172a"/>
+                                                <TextBlock Text="Split: part cash, part POS" FontSize="11" Foreground="#94a3b8"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Amount Received (for cash only) -->
+                                <StackPanel x:Name="CashAmountPanel" Visibility="Collapsed" Margin="0,0,0,18">
+                                    <TextBlock Text="AMOUNT RECEIVED" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,6"/>
+                                    <TextBox x:Name="AmountReceivedBox" Padding="12,10" FontSize="16" FontWeight="Bold"
+                                             Background="#f8fafc" BorderBrush="#e2e8f0" BorderThickness="1.5"
+                                             TextChanged="AmountReceived_Changed"/>
+                                    <Border x:Name="ChangePanel" Visibility="Collapsed" Background="#fefce8" CornerRadius="10" Padding="14,10" Margin="0,8,0,0">
+                                        <Grid>
+                                            <TextBlock Text="Change" FontSize="13" FontWeight="SemiBold" Foreground="#854d0e" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ChangeText" Text="₦ 0.00" FontSize="16" FontWeight="Bold" Foreground="#ca8a04"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Split Payment (for cash+transfer / cash+pos) -->
+                                <StackPanel x:Name="SplitAmountPanel" Visibility="Collapsed" Margin="0,0,0,18">
+                                    <TextBlock Text="CASH AMOUNT" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,0,0,6"/>
+                                    <TextBox x:Name="SplitCashBox" Padding="12,10" FontSize="16" FontWeight="Bold"
+                                             Background="#f8fafc" BorderBrush="#e2e8f0" BorderThickness="1.5"
+                                             TextChanged="SplitAmount_Changed"/>
+                                    <TextBlock x:Name="SplitSecondLabel" Text="TRANSFER AMOUNT" FontSize="10" FontWeight="Bold" Foreground="#64748b" Margin="0,12,0,6"/>
+                                    <TextBox x:Name="SplitSecondBox" Padding="12,10" FontSize="16" FontWeight="Bold"
+                                             Background="#f8fafc" BorderBrush="#e2e8f0" BorderThickness="1.5"
+                                             TextChanged="SplitAmount_Changed"/>
+                                    <Border x:Name="SplitBalancePanel" Visibility="Collapsed" Background="#fefce8" CornerRadius="10" Padding="14,10" Margin="0,8,0,0">
+                                        <Grid>
+                                            <TextBlock x:Name="SplitBalanceLabel" Text="Remaining" FontSize="13" FontWeight="SemiBold" Foreground="#854d0e" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="SplitBalanceText" Text="₦ 0.00" FontSize="16" FontWeight="Bold" Foreground="#ca8a04"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Confirm Button -->
+                                <Button x:Name="ConfirmPaymentBtn" Style="{StaticResource OrdBtn}" Click="ConfirmPayment_Click" 
+                                        Height="48" IsEnabled="False" Margin="0,4,0,0">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#22c55e" Offset="0"/>
+                                            <GradientStop Color="#16a34a" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="✅" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Confirm Payment" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+    </Grid>
+</UserControl>

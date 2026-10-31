@@ -1,0 +1,21 @@
+<Window x:Class="RestaurantManager.Views.Dialogs.InputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Input Dialog" Height="180" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Name="MessageText" Text="Please enter value:" FontWeight="Bold" Margin="0,0,0,8"/>
+        <TextBox Name="InputBox" Grid.Row="1" Padding="8" BorderThickness="1" BorderBrush="#E2E8F0"/>
+        
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="CancelButton" Content="Cancel" IsCancel="True" Width="80" Padding="0,6,0,6" Margin="0,0,10,0" Background="#F1F5F9" BorderThickness="0"/>
+            <Button Name="OkButton" Content="OK" IsDefault="True" Width="80" Padding="0,6,0,6" Background="#22C55E" Foreground="White" BorderThickness="0" Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

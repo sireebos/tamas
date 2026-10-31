@@ -1,0 +1,771 @@
+================================================================================
+                    RESTAURANT MANAGER — FULL DOCUMENTATION
+                    Features & Functionality Reference Guide
+================================================================================
+
+TABLE OF CONTENTS
+─────────────────
+ 1.  Overview & Technical Stack
+ 2.  Authentication & User Management
+ 3.  Dashboard
+ 4.  Orders Management
+ 5.  Inventory Management
+ 6.  Reports & Analytics
+ 7.  Admin Settings
+ 8.  Receipt System
+ 9.  Database & Data Persistence
+ 10. Core Services & Architecture
+ 11. User Interface & Design
+ 12. Seed / Demo Data
+
+================================================================================
+1. OVERVIEW & TECHNICAL STACK
+================================================================================
+
+Restaurant Manager is a full-featured Point-of-Sale (POS) desktop application
+built for restaurant and food-service businesses. It manages orders, inventory,
+payments, receipts, analytics/reports, user roles, and branding — all from a
+single modern Windows application.
+
+TECHNOLOGY STACK:
+  • Framework:        WPF (.NET 8.0), C#
+  • UI Toolkit:       WPF-UI 4.2.0 (FluentWindow, Mica backdrop)
+  • Database:         SQLite via Microsoft.EntityFrameworkCore.Sqlite 8.0.0
+  • MVVM Toolkit:     CommunityToolkit.Mvvm 8.2.1
+  • JSON:             Newtonsoft.Json 13.0.3
+  • HTTP:             Microsoft.Extensions.Http 8.0.0
+  • Target:           net8.0-windows, Nullable enabled, Latest C# language
+  • Architecture:     Code-behind pattern with static service instances on App
+  • DB Location:      %AppData%/RestaurantManager/restaurant.db
+
+================================================================================
+2. AUTHENTICATION & USER MANAGEMENT
+================================================================================
+
+LOGIN SYSTEM:
+  • Email + Password authentication
+  • Role-based access control with three roles:
+      – Developer: Full access to all features and settings
+      – Admin:     Access to orders, inventory, reports, and limited settings
+      – Staff:     Access to orders and dashboard only
+  • Demo login accounts (toggleable via Developer settings)
+  • Close confirmation dialog on login window exit
+
+USER ROLES & PERMISSIONS:
+  ┌──────────────┬────────────────────────────────────────────────────────┐
+  │ Role         │ Access                                                │
+  ├──────────────┼────────────────────────────────────────────────────────┤
+  │ Developer    │ All features, all admin settings tabs, Developer tab, │
+  │              │ can assign Developer role to users                    │
+  │ Admin        │ Dashboard, Orders, Inventory, Reports, limited        │
+  │              │ settings (Login Form, Users, Departments, Categories) │
+  │ Staff        │ Dashboard, Orders only                                │
+  └──────────────┴────────────────────────────────────────────────────────┘
+
+USER PROPERTIES:
+  • Name, Email, Password
+  • Role (comma-separated: developer, admin, staff)
+  • Department (kitchen, service, bar, housekeeping, front-desk, cashier)
+  • Status (active / inactive)
+  • CreatedAt, UpdatedAt timestamps
+
+================================================================================
+3. DASHBOARD
+================================================================================
+
+The Dashboard is the main landing page after login. It provides an at-a-glance
+overview of business performance with four customizable summary cards.
+
+SUMMARY CARDS (4):
+  • Total Revenue       – Sum of all completed order totals
+  • Today's Orders      – Count of orders placed today
+  • Menu Items          – Total number of active menu/inventory items
+  • Low Stock Alerts    – Count of items below their minimum stock level
+
+FEATURES:
+  • Dynamic currency formatting (default: ₦ Naira)
+  • Card background gradients are customizable via Admin Settings (Theme Colors)
+  • Card text color is configurable
+  • Real-time data refresh on view load
+  • Quick action buttons for common tasks
+  • Recent orders list with status indicators
+
+================================================================================
+4. ORDERS MANAGEMENT
+================================================================================
+
+The Orders module is the core POS functionality, supporting multi-tab ordering,
+full payment processing, receipt generation, and order history management.
+
+─── 4.1 MULTI-TAB ORDER SYSTEM ───
+
+  • Create multiple simultaneous orders via tabs
+  • Each tab represents an independent order with its own cart
+  • "+" button to add new order tabs
+  • Tab header shows order number
+  • Switch between tabs without losing data
+  • Close individual tabs (with confirmation if items exist)
+  • Each tab maintains its own state (items, notes, table number)
+
+─── 4.2 MENU & ITEM SELECTION ───
+
+  • Grid display of available inventory items
+  • Search bar to filter items by name
+  • Category-based filtering
+  • Each item card shows:
+      – Item name and category
+      – Price (formatted with dynamic currency)
+      – Available stock quantity
+  • Click to add item to current order tab
+  • Quantity adjustment (increment/decrement) in cart
+  • Remove individual items from cart
+  • Real-time total calculation
+
+─── 4.3 ORDER CART ───
+
+  • Right-side panel showing current order items
+  • Per-item: name, quantity, unit price, line total
+  • Quantity controls (+/-) for each item
+  • Delete button to remove items
+  • Order notes field
+  • Running subtotal and total display
+  • Clear cart option
+  • "Back" button with unsaved changes warning
+
+─── 4.4 PAYMENT SYSTEM ───
+
+  Full-screen payment overlay with four payment methods:
+
+  • 💵 Cash Payment:
+      – Enter amount tendered
+      – Automatic change calculation
+      – Quick-amount buttons
+      – Validates sufficient payment
+
+  • 💳 Card Payment:
+      – Reference number input
+      – Direct completion
+
+  • 🏦 Bank Transfer:
+      – Reference number input
+      – Direct completion
+
+  • 📱 Mobile Payment:
+      – Reference number input
+      – Direct completion
+
+  Payment flow:
+    1. Click "Complete Order" or "Pay" button
+    2. Payment overlay appears (full-screen)
+    3. Select payment method
+    4. Enter required details
+    5. Confirm payment
+    6. Order status changes to "completed"
+    7. PaymentMethod recorded on order
+    8. Receipt auto-generated
+    9. Inventory quantities automatically decremented
+
+─── 4.5 ORDER HISTORY ───
+
+  • View all past orders in scrollable list
+  • Each order card displays:
+      – Selection checkbox (for bulk operations)
+      – Status icon (emoji-coded)
+      – Order number, date/time, item count
+      – Total amount (formatted currency)
+      – Action buttons (View, Edit, Delete)
+  • Search orders by order number
+  • Filter by status: All, Pending, Preparing, Completed, Cancelled
+  • View order details with full item breakdown
+
+  Edit capabilities (for non-completed orders):
+    – Modify quantities
+    – Remove items
+    – Add notes
+    – Change status
+
+  Actions on completed orders:
+    – View details
+    – Print receipt
+    – Process payment (if unpaid)
+
+─── 4.6 MULTI-SELECT & BULK DELETE ───
+
+  • Checkbox on each order card for selection
+  • "Select All" checkbox in filter bar
+  • "Delete Selected (N)" button showing count
+  • Bulk delete with confirmation dialog
+  • Selection state tracked via HashSet
+
+─── 4.7 ORDER STATUSES ───
+
+  ┌────────────┬────────┬───────────────────────────┐
+  │ Status     │ Icon   │ Description               │
+  ├────────────┼────────┼───────────────────────────┤
+  │ Pending    │ 🟡     │ Order placed, not started  │
+  │ Preparing  │ 🔵     │ Being prepared             │
+  │ Completed  │ 🟢     │ Fulfilled and paid         │
+  │ Cancelled  │ 🔴     │ Order was cancelled        │
+  └────────────┴────────┴───────────────────────────┘
+
+================================================================================
+5. INVENTORY MANAGEMENT
+================================================================================
+
+Full inventory tracking system with stock levels, categories, cost tracking,
+and low-stock alerts.
+
+─── 5.1 INVENTORY ITEMS ───
+
+  Each item tracks:
+    • Name                    – Item name
+    • Description             – Optional description
+    • Category                – Assigned category (e.g., Proteins, Produce)
+    • Quantity                – Current stock count
+    • Unit                    – Unit of measurement (e.g., kg, pcs, liters)
+    • Cost Price              – Cost per unit (for stock valuation)
+    • Minimum Level           – Threshold for low-stock alerts
+    • Reorder Quantity        – Suggested reorder amount
+    • Stock Value             – Computed: Quantity × CostPrice
+    • CreatedAt / UpdatedAt   – Timestamps
+
+─── 5.2 INVENTORY MANAGEMENT FEATURES ───
+
+  • View all items in scrollable list/grid
+  • Search items by name
+  • Filter by category
+  • Add new items with full details
+  • Edit existing items
+  • Delete items (with confirmation)
+  • Stock level indicators (color-coded):
+      – Green: Stock above minimum level
+      – Yellow: Stock at or near minimum level
+      – Red: Stock below minimum level (low stock alert)
+  • Inventory adjustments log (InventoryLog entity)
+  • Automatic stock deduction when orders are completed
+
+─── 5.3 CATEGORIES ───
+
+  Categories organize inventory items:
+    • Name (e.g., Proteins, Produce, Dry Goods)
+    • Icon (emoji, e.g., 🥩, 🥬, 🌾)
+    • Color (hex color code)
+    • Association with Departments via CategoryDepartment join table
+    • Managed in Admin Settings → Categories tab
+
+─── 5.4 DEPARTMENTS ───
+
+  Departments organize business operations:
+    • Name (e.g., Eatery/Restaurant, Lounge, Shawarma Spot)
+    • Icon (emoji, e.g., 🍽, 🛋, 🌯)
+    • Color (hex color code)
+    • User assignment via UserDepartment join table
+    • Category assignment via CategoryDepartment join table
+    • Managed in Admin Settings → Departments tab
+
+================================================================================
+6. REPORTS & ANALYTICS
+================================================================================
+
+Comprehensive reporting dashboard with 9 analytical sections, date filtering,
+and CSV export capability. Accessible to Admin and Developer roles only.
+
+─── 6.1 DATE FILTERS ───
+
+  • Today          – Current day only
+  • This Week      – Current week
+  • This Month     – Current month (default)
+  • This Year      – Current year
+  • Custom Range   – User-defined start and end dates
+
+─── 6.2 REPORT SECTIONS ───
+
+  1. SUMMARY CARDS
+     • Total Revenue (formatted with currency)
+     • Total Orders count
+     • Average Order Value
+     • Total Items Sold
+     • Period-over-period comparison
+
+  2. REVENUE CHART
+     • Bar chart drawn on Canvas
+     • Revenue plotted by date
+     • Visual revenue trends over selected period
+
+  3. PAYMENT METHOD BREAKDOWN
+     • Distribution across payment methods:
+       – Cash, Card, Bank Transfer, Mobile
+     • Progress bars showing proportion
+     • Amount and percentage for each method
+
+  4. TOP SELLING ITEMS
+     • Top 10 items ranked by revenue
+     • Shows item name, quantity sold, total revenue
+
+  5. ORDER STATUS DISTRIBUTION
+     • Completed, Pending, Preparing, Cancelled counts
+     • Visual breakdown of order outcomes
+
+  6. SALES BY CATEGORY
+     • Revenue grouped by inventory item category
+     • Category name and total revenue
+
+  7. PEAK HOURS ANALYSIS
+     • Top 8 busiest hours of the day
+     • Order count per hour
+     • Helps with staffing decisions
+
+  8. STAFF PERFORMANCE
+     • Per-user order count and revenue
+     • Staff member name, orders handled, total revenue
+
+  9. DAILY BREAKDOWN TABLE
+     • Tabular format showing last 14 days
+     • Columns: Date, Orders, Completed, Revenue
+
+─── 6.3 CSV EXPORT ───
+
+  • Export filtered order data to CSV file
+  • Save file dialog for location selection
+  • Includes order details, items, totals, dates
+
+================================================================================
+7. ADMIN SETTINGS
+================================================================================
+
+Comprehensive settings panel with 9 tabs. Tab visibility is role-restricted.
+
+  Developer-only tabs: Branding, Currency, Theme Colors, Receipt, Developer
+  Admin + Developer tabs: Login Form, Users, Departments, Categories
+
+─── 7.1 BRANDING TAB (Developer only) ───
+
+  • Logo Emoji:          Emoji displayed as logo fallback
+  • Logo Image:          Upload company logo image (PNG/JPG)
+                         – Used on receipts, login page, and as app window icon
+                         – Remove option to revert to default
+  • Business Name:       Line 1 and Line 2
+  • Tagline:             Company tagline
+  • Description:         Business description
+  • Copyright Text:      Shown on login page
+  • Window Title:        Application window title
+  • Welcome Title:       Login page welcome heading
+  • Welcome Subtitle:    Login page welcome subheading
+
+  Live preview: Logo changes immediately update the app window icon on all
+  open windows via App.ApplyLogoIcon().
+
+─── 7.2 LOGIN FORM TAB ───
+
+  Configure the login page appearance:
+  • Welcome title and subtitle text
+  • Logo display settings
+  • Business name display
+  • Description and tagline visibility
+
+─── 7.3 CURRENCY TAB (Developer only) ───
+
+  • Currency Symbol:       Default ₦ (Naira)
+  • Currency Code:         Default NGN
+  • Currency Position:     Before or After the amount
+  • Thousands Separator:   Default comma (,)
+  • Decimal Separator:     Default period (.)
+  • Decimal Places:        Default 2
+
+  All currency formatting throughout the app uses BrandingSettings.FormatCurrency()
+  which respects these settings dynamically.
+
+─── 7.4 THEME COLORS TAB (Developer only) ───
+
+  Customize dashboard card gradients:
+  • Card 1 – Gradient Color 1 & Color 2 (Total Revenue card)
+  • Card 2 – Gradient Color 1 & Color 2 (Today's Orders card)
+  • Card 3 – Gradient Color 1 & Color 2 (Menu Items card)
+  • Card 4 – Gradient Color 1 & Color 2 (Low Stock card)
+  • Card Text Color (applies to all cards)
+
+  Color inputs accept hex color codes (e.g., #667eea).
+  Changes apply immediately to the Dashboard on next load.
+
+─── 7.5 RECEIPT TAB (Developer only) ───
+
+  Configure printed/previewed receipt content:
+  • Receipt Header:    Custom text printed at top of receipt
+  • Receipt Footer:    Custom text printed at bottom of receipt
+  • Header/footer appear on all generated receipts
+  • Default receipt width: 42 characters (POS standard)
+
+─── 7.6 USERS TAB ───
+
+  Full user CRUD management:
+  • View all users in a list
+  • Add new user: Name, Email, Password, Role, Department, Status
+  • Edit existing users
+  • Delete users (with confirmation)
+  • Role assignment:
+      – Staff, Admin checkboxes always visible
+      – Developer checkbox visible ONLY to Developer users
+  • Department assignment dropdown
+  • Status toggle (active/inactive)
+
+─── 7.7 DEPARTMENTS TAB ───
+
+  Manage business departments:
+  • View all departments
+  • Add new: Name, Icon (emoji), Color (hex)
+  • Edit existing departments
+  • Delete departments (with confirmation)
+
+─── 7.8 CATEGORIES TAB ───
+
+  Manage inventory categories:
+  • View all categories
+  • Add new: Name, Icon (emoji), Color (hex)
+  • Edit existing categories
+  • Delete categories (with confirmation)
+
+─── 7.9 DEVELOPER TAB (Developer only) ───
+
+  Developer-specific controls:
+  • Show Demo Login Toggle:
+      – Checkbox to show/hide demo account section on login page
+      – When enabled, demo accounts with quick-login buttons appear
+      – Setting persists in database (BrandingSettings.ShowDemoLogin)
+  • Trademark Text:
+      – Configurable text displayed in app footer areas
+      – Default: "Powered by Restaurant Manager"
+      – Appears in: Main window footer, sidebar bottom, login page (both panels)
+      – Setting persists in database (BrandingSettings.TrademarkText)
+
+================================================================================
+8. RECEIPT SYSTEM
+================================================================================
+
+Professional receipt generation and printing system.
+
+─── 8.1 RECEIPT CONTENT ───
+
+  Receipt layout (42-character width, Consolas monospace font):
+  ┌──────────────────────────────────────────┐
+  │          [Company Logo Image]            │
+  │         Business Name Line 1             │
+  │         Business Name Line 2             │
+  │        ─────────────────────             │
+  │        Custom Receipt Header             │
+  │        ─────────────────────             │
+  │ Order: #ORD-XXXXX                        │
+  │ Date:  DD/MM/YYYY HH:MM                 │
+  │ Cashier: [User Name]                     │
+  │ Payment: [Cash/Card/Transfer/Mobile]     │
+  │ ──────────────────────────────────────── │
+  │ Item Name           Qty    Price   Total │
+  │ ──────────────────────────────────────── │
+  │ [Item 1]             x2   ₦500  ₦1,000  │
+  │ [Item 2]             x1   ₦300    ₦300  │
+  │ ──────────────────────────────────────── │
+  │ TOTAL                          ₦1,300.00 │
+  │ ──────────────────────────────────────── │
+  │        Custom Receipt Footer             │
+  │          Thank you message               │
+  └──────────────────────────────────────────┘
+
+─── 8.2 RECEIPT FEATURES ───
+
+  • FlowDocument-based rendering
+  • Company logo image included (from BrandingSettings.LogoImagePath)
+  • Configurable header and footer text
+  • Dynamic currency formatting
+  • Payment method displayed
+  • Cashier name from logged-in user
+  • Auto-generated on order completion
+  • Available from order history for completed orders
+
+─── 8.3 RECEIPT PREVIEW ───
+
+  • Dedicated ReceiptPreviewWindow
+  • FlowDocumentScrollViewer for on-screen viewing
+  • Print button to send to system printer
+  • Logo image cloned for print document
+  • Scrollable preview before printing
+
+─── 8.4 PRINTING ───
+
+  • System print dialog integration
+  • FlowDocument paginated for printer
+  • Logo image support in printed output
+  • Standard POS receipt formatting
+
+================================================================================
+9. DATABASE & DATA PERSISTENCE
+================================================================================
+
+─── 9.1 DATABASE CONFIGURATION ───
+
+  • Engine:    SQLite
+  • ORM:      Entity Framework Core 8.0
+  • Location: %AppData%/RestaurantManager/restaurant.db
+  • Context:  RestaurantDbContext
+  • Init:     EnsureCreated() + raw SQL migrations
+
+─── 9.2 TABLES / ENTITIES ───
+
+  ┌─────────────────────┬──────────────────────────────────────────────┐
+  │ Table               │ Purpose                                      │
+  ├─────────────────────┼──────────────────────────────────────────────┤
+  │ Users               │ User accounts with roles and departments     │
+  │ Orders              │ Order header (number, status, total, payment)│
+  │ OrderItems          │ Line items with quantity, price, item ref    │
+  │ MenuItems           │ Menu items (legacy, for seeding)             │
+  │ InventoryItems      │ Stock items with cost, quantity, levels      │
+  │ InventoryLogs       │ Stock adjustment history                     │
+  │ Categories          │ Item categories with icon and color          │
+  │ Departments         │ Business departments with icon and color     │
+  │ UserDepartments     │ User ↔ Department join table                 │
+  │ CategoryDepartments │ Category ↔ Department join table             │
+  │ BrandingSettings    │ All app configuration and branding           │
+  │ SyncLogs            │ Change tracking for future sync              │
+  └─────────────────────┴──────────────────────────────────────────────┘
+
+─── 9.3 RELATIONSHIPS ───
+
+  • Order → OrderItems:         One-to-Many (cascade delete)
+  • OrderItem → InventoryItem:  Many-to-One (FK: InventoryItemId)
+  • User ↔ Department:          Many-to-Many (via UserDepartments)
+  • Category ↔ Department:      Many-to-Many (via CategoryDepartments)
+
+─── 9.4 MIGRATIONS ───
+
+  Database migrations run automatically on startup via raw SQL:
+  • CREATE TABLE IF NOT EXISTS for Categories, Departments, join tables
+  • ALTER TABLE Orders ADD COLUMN PaymentMethod (with backfill of NULL → "N/A")
+  • ALTER TABLE BrandingSettings ADD COLUMN ReceiptHeader
+  • ALTER TABLE BrandingSettings ADD COLUMN ReceiptFooter
+  • ALTER TABLE BrandingSettings ADD COLUMN ShowDemoLogin
+  • ALTER TABLE BrandingSettings ADD COLUMN TrademarkText
+
+─── 9.5 SYNC SYSTEM ───
+
+  • SyncLog table tracks all entity changes
+  • Records: EntityType, EntityId, Action (create/update/delete), JSON Data
+  • IsSynced flag for future cloud synchronization
+  • Currently operates in local-only mode
+  • "System Online" status indicator in sidebar
+
+================================================================================
+10. CORE SERVICES & ARCHITECTURE
+================================================================================
+
+─── 10.1 SERVICE PATTERN ───
+
+  All services are instantiated as static properties on the App class:
+    • App.OrderService        – Order CRUD, item management
+    • App.InventoryService    – Inventory CRUD, stock adjustments
+    • App.BrandingService     – Branding settings get/save
+    • App.UserService         – User authentication, CRUD
+    • App.CategoryService     – Category CRUD
+    • App.DepartmentService   – Department CRUD
+
+  Services are available globally via App.ServiceName throughout the
+  application without dependency injection containers.
+
+─── 10.2 APP STARTUP SEQUENCE ───
+
+  1. Create database directory if not exists
+  2. Initialize RestaurantDbContext
+  3. EnsureCreated() — create tables
+  4. Run SQL migrations (ALTER TABLE statements)
+  5. Seed demo data (users, menu items, inventory, categories, departments)
+  6. Create all service instances
+  7. Show LoginWindow
+
+─── 10.3 KEY SERVICE METHODS ───
+
+  OrderService:
+    • GetAllOrdersAsync()         – With ThenInclude for Items → InventoryItem
+    • GetOrderByIdAsync(id)       – Single order with includes
+    • CreateOrderAsync(order)     – Create + SyncLog
+    • UpdateOrderAsync(order)     – Update + SyncLog
+    • DeleteOrderAsync(id)        – Delete + SyncLog
+
+  InventoryService:
+    • GetAllItemsAsync()          – All inventory items
+    • GetItemByIdAsync(id)        – Single item
+    • CreateItemAsync(item)       – Create
+    • UpdateItemAsync(item)       – Update
+    • DeleteItemAsync(id)         – Delete
+    • AdjustStockAsync(id, qty)   – Stock adjustment with log
+
+  BrandingService:
+    • GetSettingsAsync()          – Load branding settings
+    • SaveSettingsAsync(settings) – Save all branding fields
+
+  UserService:
+    • AuthenticateAsync(email, password) – Login validation
+    • GetAllUsersAsync()                 – All users
+    • CreateUserAsync(user)              – Create
+    • UpdateUserAsync(user)              – Update
+    • DeleteUserAsync(id)                – Delete
+
+─── 10.4 ERROR HANDLING ───
+
+  • Global exception handler catches unhandled exceptions
+  • Error dialog shown to user
+  • Error logged to temp file: RestaurantManager_Error.log
+  • Inner exception details captured for debugging
+  • Local try-catch blocks in service calls with user-friendly messages
+  • Status messages displayed in UI for success/failure feedback
+
+─── 10.5 APP ICON SYSTEM ───
+
+  • Default app icon: app.ico (restaurant plate with fork & knife)
+  • Dynamic icon: If company logo is uploaded in Branding settings,
+    the logo is used as the window icon for all windows
+  • App.ApplyLogoIcon(Window) helper method:
+      – Checks BrandingSettings.LogoImagePath
+      – Loads image as BitmapImage
+      – Sets as window Icon property
+      – Falls back to default app.ico if no logo or file not found
+
+================================================================================
+11. USER INTERFACE & DESIGN
+================================================================================
+
+─── 11.1 WINDOW LAYOUT ───
+
+  Login Window:
+    • Two-panel layout (left info + right login form)
+    • Left panel: Logo, business name, tagline, description, copyright,
+      trademark text
+    • Right panel: Login form, optional demo accounts, trademark text
+    • Close confirmation dialog
+
+  Main Window:
+    • FluentWindow with Mica backdrop effect
+    • Two-column layout: Sidebar (250px) + Content area
+    • Minimum size: 1400 × 780 pixels
+    • Centered on screen at startup
+
+  Sidebar:
+    • User info card at top (avatar, name, role)
+    • Navigation buttons with emoji icons:
+        – 📊 Dashboard
+        – 🍽 Orders
+        – 📦 Inventory (admin/developer only)
+        – 📈 Reports (admin/developer only)
+        – ⚙ Settings (admin/developer only)
+    • Active state indicator on current page
+    • Bottom section: System status, Logout button (red), Trademark text
+
+  Content Area:
+    • Scrollable content region
+    • Views loaded dynamically based on nav selection
+    • Trademark footer at bottom
+
+─── 11.2 UI COMPONENTS ───
+
+  Cards:
+    • Drop shadow (2px offset, 12px blur, 6% opacity)
+    • Rounded corners (16px radius)
+    • White background with padding
+    • Hover state effects
+
+  Buttons:
+    • Primary: Gradient background
+    • Secondary: Outlined style
+    • Danger: Red-themed for destructive actions
+    • Hover: Opacity change
+    • Active/Pressed: Scale transform
+    • Disabled: 50% opacity
+    • Rounded corners (10-12px)
+
+  Input Fields:
+    • White background
+    • Light border (#e2e8f0)
+    • Focus state: Purple border
+    • Adequate padding for touch targets
+
+  Status Indicators:
+    • Color-coded badges
+    • Emoji icons for visual clarity
+    • Background fills matching status type
+
+  Gradients:
+    • Linear gradients (0° to 45° angles)
+    • Multi-stop color transitions
+    • Applied to cards, buttons, and backgrounds
+
+─── 11.3 DIALOG & FEEDBACK ───
+
+  • Modal overlays with semi-transparent background
+  • Centered on screen
+  • Escape key to close dialogs
+  • Success messages in green
+  • Error messages in red
+  • Confirmation dialogs for all destructive actions
+  • Loading indicators for async operations
+  • Tab order on forms for keyboard navigation
+
+─── 11.4 TRADEMARK SYSTEM ───
+
+  Configurable trademark text displayed in:
+    • Main window bottom footer
+    • Sidebar bottom (below Logout)
+    • Login window left panel (below copyright)
+    • Login window right panel (below form)
+  Default: "Powered by Restaurant Manager"
+  Configurable via Developer tab in Admin Settings.
+
+================================================================================
+12. SEED / DEMO DATA
+================================================================================
+
+The application seeds demo data on first launch for immediate testing.
+
+─── 12.1 DEMO USER ACCOUNTS ───
+
+  ┌─────────────────┬──────────────────────────┬───────────┬────────────┐
+  │ Name            │ Email                    │ Role      │ Department │
+  ├─────────────────┼──────────────────────────┼───────────┼────────────┤
+  │ Developer       │ dev@restaurant.test      │ developer │ —          │
+  │ Admin User      │ admin@restaurant.test    │ admin     │ —          │
+  │ Chef User       │ chef@restaurant.test     │ staff     │ kitchen    │
+  │ Waiter User     │ waiter@restaurant.test   │ staff     │ service    │
+  │ Bartender User  │ bar@restaurant.test      │ staff     │ bar        │
+  │ Cashier User    │ cashier@restaurant.test  │ staff     │ cashier    │
+  └─────────────────┴──────────────────────────┴───────────┴────────────┘
+
+  All demo accounts use password: "password"
+
+─── 12.2 SEED INVENTORY (21 Items) ───
+
+  Proteins (5):   Beef Fillet, Chicken Breast, Salmon Fillet, Lamb Chops, Prawns
+  Produce (5):    Mixed Vegetables, Lettuce, Tomatoes, Onions, Mushrooms
+  Dry Goods (4):  Pasta, Rice, Flour, Olive Oil
+  Beverages (4):  Coffee Beans, Tea Selection, Fresh Juice, Mineral Water
+  Dairy (3):      Butter, Cream, Cheese Assorted
+
+─── 12.3 SEED CATEGORIES (7) ───
+
+  🥩 Proteins  •  🥬 Produce  •  🌾 Dry Goods  •  🥤 Beverages
+  🧀 Dairy     •  🧂 Spices   •  🧹 Supplies
+
+─── 12.4 SEED DEPARTMENTS (3) ───
+
+  🍽 Eatery/Restaurant  •  🛋 Lounge  •  🌯 Shawarma Spot
+
+─── 12.5 SEED MENU ITEMS (4) ───
+
+  Burger (Main, 12.99), Salad (Appetizer, 8.99),
+  Pasta (Main, 14.99), Coffee (Beverages, 3.50)
+
+================================================================================
+                           END OF DOCUMENTATION
+================================================================================
+
+  Application:   Restaurant Manager
+  Version:       1.0
+  Platform:      Windows (WPF .NET 8.0)
+  Database:      SQLite (Local)
+  Default Currency: ₦ (Nigerian Naira)
+
+================================================================================

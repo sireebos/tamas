@@ -1,0 +1,26 @@
+## Visual Studio / .NET
+.vs/
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+portable_release/
+installer_output/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.db
+*.sqlite
+
+# Temporary and build logs
+*.log
+build_*.txt
+out.txt
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
